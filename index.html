@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>کارت پستال دیجیتال روز معلم</title>
+  <!-- فونت فارسی وزیرمتن برای نمایش زیبا و مدرن -->
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+  <!-- کتابخانه ساخت QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-gradient-1: #16111d;
+      --bg-gradient-2: #24192e;
+      --gold-light: #ffe08a;
+      --gold-main: #e5b344;
+      --gold-dark: #a6781e;
+      --card-bg: rgba(255, 250, 240, 0.96);
+      --text-main: #2d1f14;
+      --text-sub: #6b533e;
+      --accent: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #2e1f3a 0%, #140e1a 70%, #0b080f 100%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ذرات نورانی معلق در پس‌زمینه کل صفحه */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255, 224, 138, 0.45), transparent),
+        radial-gradient(2px 2px at 80% 20%, rgba(255, 224, 138, 0.35), transparent),
+        radial-gradient(3px 3px at 45% 75%, rgba(229, 179, 68, 0.3), transparent),
+        radial-gradient(2px 2px at 70% 80%, rgba(255, 255, 255, 0.25), transparent);
+      background-size: 260px 260px;
+      animation: driftBg 24s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes driftBg {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-260px); }
+    }
+
+    /* صفحه خوش‌آمدگویی / پاکت نامه اولیه برای عبور از محدودیت پخش خودکار موبایل */
+    .envelope-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(38, 25, 48, 0.96), rgba(13, 9, 18, 0.99));
+      backdrop-filter: blur(10px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    .envelope-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .envelope-box {
+      max-width: 360px;
+      width: 100%;
+      background: linear-gradient(145deg, #2a1d35, #1b1224);
+      border: 1.5px solid rgba(229, 179, 68, 0.45);
+      border-radius: 28px;
+      padding: 36px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 0 24px rgba(229, 179, 68, 0.12);
+      animation: floatCard 3.5s ease-in-out infinite;
+    }
+
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .seal-badge {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-main), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      box-shadow: 0 8px 25px rgba(229, 179, 68, 0.45);
+      animation: pulseGold 2s infinite;
+    }
+
+    @keyframes pulseGold {
+      0% { box-shadow: 0 0 0 0 rgba(229, 179, 68, 0.6); }
+      70% { box-shadow: 0 0 0 18px rgba(229, 179, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(229, 179, 68, 0); }
+    }
+
+    .envelope-title {
+      color: var(--gold-light);
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .envelope-desc {
+      color: #d6c8e0;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 26px;
+    }
+
+    .open-btn {
+      width: 100%;
+      padding: 15px 24px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      color: #261608;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(253, 160, 133, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .open-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* کانتینر اصلی کارت پستال */
+    .postcard-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 430px;
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .postcard-wrapper.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .postcard {
+      background: var(--card-bg);
+      border-radius: 28px;
+      padding: 14px;
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 224, 138, 0.5),
+        inset 0 0 30px rgba(229, 179, 68, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* قاب داخلی طلایی */
+    .postcard-inner {
+      border: 1.5px solid rgba(201, 149, 44, 0.35);
+      border-radius: 20px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #fffdf9 0%, #f9f1e2 100%);
+      position: relative;
+    }
+
+    /* بخش تصویر و بوم انیمیشن */
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 3.7;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #fffdf8 0%, #f5ead6 100%);
+    }
+
+    /* هاله نور چرخان پشت سر معلم هنگام پخش */
+    .sunburst {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      width: 160%;
+      height: 160%;
+      transform: translate(-50%, -50%);
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(229, 179, 68, 0.11) 0deg 10deg,
+        transparent 10deg 20deg
+      );
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .stage.playing .sunburst {
+      opacity: 1;
+      animation: spinRays 24s linear infinite;
+    }
+
+    @keyframes spinRays {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* تصویر معلم */
+    .teacher-img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transform-origin: center bottom;
+      transition: transform 0.6s ease, filter 0.6s ease;
+    }
+
+    /* انیمیشن زنده و ریتمیک تصویر معلم هنگام پخش موزیک */
+    .stage.playing .teacher-img {
+      animation: teacherCelebrate 2.4s ease-in-out infinite;
+      filter: contrast(1.03) saturate(1.06);
+    }
+
+    @keyframes teacherCelebrate {
+      0%, 100% {
+        transform: scale(1) translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.028) translateY(-5px) rotate(-0.6deg);
+      }
+      50% {
+        transform: scale(1.015) translateY(-2px) rotate(0deg);
+      }
+      75% {
+        transform: scale(1.03) translateY(-6px) rotate(0.6deg);
+      }
+    }
+
+    /* لایه محو پایین تصویر برای ادغام نرم با متن */
+    .stage-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 55px;
+      background: linear-gradient(to top, #fcf7ee 5%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* بوم ستاره‌باران و کاغذ رنگی */
+    #fxCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* نشانگر وضعیت بالا */
+    .top-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      background: rgba(255, 252, 245, 0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(201, 149, 44, 0.35);
+      color: #7c5313;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qr-trigger {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 5;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 149, 44, 0.4);
+      background: rgba(255, 252, 245, 0.9);
+      color: #6e4810;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .qr-trigger:hover {
+      transform: scale(1.08);
+    }
+
+    /* بخش متن تبریک */
+    .content-area {
+      padding: 8px 20px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .main-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #8a560c 0%, #c9861c 50%, #7a4906 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: var(--text-sub);
+      margin-bottom: 18px;
+      min-height: 52px;
+    }
+
+    /* پخش‌کننده اختصاصی و شیک موزیک */
+    .player-card {
+      background: #ffffff;
+      border: 1px solid rgba(217, 167, 74, 0.32);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 22px rgba(138, 86, 12, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .play-pause-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #e5b344, #c5841b);
+      color: #fff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 6px 16px rgba(197, 132, 27, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .play-pause-btn:active {
+      transform: scale(0.93);
+    }
+
+    .track-info {
+      flex: 1;
+      text-align: right;
+      overflow: hidden;
+    }
+
+    .track-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .track-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #3a2718;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* اکولایزر متحرک کنار نام آهنگ */
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .equalizer span {
+      width: 3px;
+      height: 4px;
+      background: #d97706;
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+
+    .equalizer.active span:nth-child(1) { animation: eq 0.6s ease-in-out infinite alternate; }
+    .equalizer.active span:nth-child(2) { animation: eq 0.45s ease-in-out infinite alternate 0.15s; }
+    .equalizer.active span:nth-child(3) { animation: eq 0.7s ease-in-out infinite alternate 0.3s; }
+    .equalizer.active span:nth-child(4) { animation: eq 0.5s ease-in-out infinite alternate 0.1s; }
+
+    @keyframes eq {
+      0% { height: 4px; }
+      100% { height: 14px; }
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 6px;
+      background: #f0e4cf;
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e5b344, #d97706);
+      border-radius: 999px;
+      transition: width 0.15s linear;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #8c7258;
+      margin-top: 4px;
+    }
+
+    /* دکمه انفجار شادی مجدد */
+    .celebrate-btn {
+      margin-top: 12px;
+      background: transparent;
+      border: 1px dashed rgba(180, 120, 28, 0.45);
+      color: #8a5a12;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .celebrate-btn:hover {
+      background: rgba(229, 179, 68, 0.12);
+    }
+
+    .celebrate-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* مودال نمایش QR Code برای چاپ یا اشتراک‌گذاری */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(12, 8, 18, 0.78);
+      backdrop-filter: blur(6px);
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #fffdf9;
+      border-radius: 24px;
+      max-width: 340px;
+      width: 100%;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      border: 1.5px solid rgba(229, 179, 68, 0.5);
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #3a2718;
+      margin-bottom: 6px;
+    }
+
+    .modal-hint {
+      font-size: 0.82rem;
+      color: #6b533e;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    #qrcodeBox {
+      display: inline-flex;
+      padding: 14px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #eadcc5;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-sm {
+      padding: 9px 16px;
+      border-radius: 12px;
+      border: none;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #e5b344, #c5841b);
+      color: #fff;
+    }
+
+    .btn-light {
+      background: #f2e8d5;
+      color: #4a3520;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- صفحه پاکت هدیه اولیه (تضمین پخش فوری و بی‌نقص موزیک در تمام گوشی‌ها) -->
+  <div class="envelope-overlay" id="envelopeOverlay">
+    <div class="envelope-box">
+      <div class="seal-badge">🎓</div>
+      <div class="envelope-title">یک پیام ویژه برای شما</div>
+      <p class="envelope-desc">
+        به مناسبت گرامیداشت مقام والای معلم، این کارت پستال دیجیتال برای شما آماده شده است.
+      </p>
+      <button class="open-btn" id="openCardBtn">
+        <span>✨ باز کردن کارت پستال</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- کارت پستال اصلی -->
+  <main class="postcard-wrapper" id="postcardWrapper">
+    <div class="postcard">
+      <div class="postcard-inner">
+        <div class="stage" id="cardStage">
+          <div class="top-pill">
+            <span>🌸 روز معلم گرامی باد</span>
+          </div>
+          <button class="qr-trigger" id="openQrBtn" title="نمایش QR کد کارت">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2"></path>
+            </svg>
+          </button>
+
+          <div class="sunburst"></div>
+          <!-- تصویر معلم بهینه‌سازی‌شده -->
+          <img
+            class="teacher-img"
+            id="teacherImg"
+            src="card.jpg"
+            alt="تبریک روز معلم"
+            onerror="this.src='84c4b954.jpeg'"
+          />
+          <div class="stage-fade"></div>
+
+          <!-- بوم انیمیشن ستاره‌باران و ذرات رنگی -->
+          <canvas id="fxCanvas"></canvas>
+        </div>
+
+        <div class="content-area">
+          <h1 class="main-title">روز معلم مبارک</h1>
+          <p class="subtitle" id="typedMessage"></p>
+
+          <!-- پخش‌کننده موزیک سفارشی -->
+          <div class="player-card">
+            <button class="play-pause-btn" id="playPauseBtn" aria-label="پخش یا توقف موزیک">
+              ▶
+            </button>
+            <div class="track-info">
+              <div class="track-header">
+                <span class="track-title">باز باران با ترانه • تقدیم به معلم عزیز</span>
+                <div class="equalizer" id="equalizer">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="progress-wrap" id="progressWrap">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="time-row">
+                <span id="currentTime">00:00</span>
+                <span id="durationTime">00:00</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="celebrate-btn" id="burstBtn">
+            🎉 بارش دوباره ستاره و کاغذ رنگی
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- مودال QR Code -->
+  <div class="modal-backdrop" id="qrModal">
+    <div class="modal-card">
+      <div class="modal-title">QR کد اختصاصی کارت پستال</div>
+      <p class="modal-hint">
+        با اسکن این کد، کارت پستال مستقیماً باز شده و همراه با موزیک و افکت‌ها اجرا می‌شود.
+      </p>
+      <div id="qrcodeBox"></div>
+      <div class="modal-actions">
+        <button class="btn-sm btn-gold" id="downloadQrBtn">دانلود QR کد</button>
+        <button class="btn-sm btn-light" id="closeQrBtn">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- فایل صوتی همراه -->
+  <audio id="bgMusic" src="music.mp3" preload="auto" loop playsinline></audio>
+
+  <script>
+    const audio = document.getElementById('bgMusic');
+    const envelopeOverlay = document.getElementById('envelopeOverlay');
+    const openCardBtn = document.getElementById('openCardBtn');
+    const postcardWrapper = document.getElementById('postcardWrapper');
+    const cardStage = document.getElementById('cardStage');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const equalizer = document.getElementById('equalizer');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationTimeEl = document.getElementById('durationTime');
+    const burstBtn = document.getElementById('burstBtn');
+    const typedMessageEl = document.getElementById('typedMessage');
+
+    // متن تبریک با انیمیشن تایپ نرم
+    const greetingText =
+      'سپاس از مهر، دانایی و روشنایی که در مسیر زندگی‌مان می‌تابانید. سایه‌تان مستدام و روزتان سرشار از شادی و افتخار باد.';
+
+    function typeWriter(text, element, speed = 34) {
+      element.textContent = '';
+      let idx = 0;
+      const timer = setInterval(() => {
+        element.textContent += text.charAt(idx);
+        idx++;
+        if (idx >= text.length) clearInterval(timer);
+      }, speed);
+    }
+
+    // تنظیم بوم انیمیشن ستاره‌باران و کاغذ رنگی
+    const canvas = document.getElementById('fxCanvas');
+    const ctx = canvas.getContext('2d');
+    const palette = [
+      '#ffd166', // طلایی روشن
+      '#f77f00', // نارنجی گرم
+      '#ef476f', // سرخابی جشن
+      '#06d6a0', // سبز فیروزه‌ای
+      '#118ab2', // آبی آسمانی
+      '#b5179e', // بنفش شاد
+      '#ffe66d'  // زرد ستاره‌ای
+    ];
+
+    let particles = [];
+    let animFrameId = null;
+
+    function resizeCanvas() {
+      const rect = cardStage.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function spawnParticle(startRandomY = false, burstMode = false) {
+      const w = cardStage.clientWidth || 380;
+      const h = cardStage.clientHeight || 460;
+      const rand = Math.random();
+      // انواع ذرات: ستاره طلایی/رنگی، کاغذ رنگی مستطیلی، دایره درخشان
+      const type = rand < 0.42 ? 'star' : rand < 0.8 ? 'confetti' : 'spark';
+
+      return {
+        x: burstMode ? w * 0.5 + (Math.random() - 0.5) * 90 : Math.random() * w,
+        y: startRandomY ? Math.random() * h : burstMode ? h * 0.22 : -15 - Math.random() * 90,
+        vx: burstMode ? (Math.random() - 0.5) * 6.5 : (Math.random() - 0.5) * 1.3,
+        vy: burstMode ? -2.5 - Math.random() * 4.5 : 1.3 + Math.random() * 2.3,
+        gravity: burstMode ? 0.11 : 0.012,
+        size: type === 'star' ? 6 + Math.random() * 7 : 5 + Math.random() * 6,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.12,
+        sway: Math.random() * Math.PI * 2,
+        color: palette[Math.floor(Math.random() * palette.length)],
+        alpha: 0.85 + Math.random() * 0.15,
+        type,
+        burstMode
+      };
+    }
+
+    function drawStar(x, y, spikes, outerR, innerR, color, rot, alpha) {
+      let angle = (Math.PI / 2) * 3 + rot;
+      const step = Math.PI / spikes;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.moveTo(x, y - outerR);
+      for (let i = 0; i < spikes; i++) {
+        ctx.lineTo(x + Math.cos(angle) * outerR, y + Math.sin(angle) * outerR);
+        angle += step;
+        ctx.lineTo(x + Math.cos(angle) * innerR, y + Math.sin(angle) * innerR);
+        angle += step;
+      }
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function initParticles(count = 55) {
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push(spawnParticle(true, false));
+      }
+    }
+
+    function triggerCelebrationBurst() {
+      resizeCanvas();
+      for (let i = 0; i < 42; i++) {
+        particles.push(spawnParticle(false, true));
+      }
+      if (!animFrameId) renderParticles();
+    }
+
+    function renderParticles() {
+      const w = cardStage.clientWidth;
+      const h = cardStage.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.sway += 0.045;
+        p.vy += p.gravity;
+        p.x += p.vx + (p.burstMode ? 0 : Math.sin(p.sway) * 0.55);
+        p.y += p.vy;
+        p.rotation += p.rotSpeed;
+
+        if (p.type === 'star') {
+          drawStar(p.x, p.y, 5, p.size, p.size * 0.44, p.color, p.rotation, p.alpha);
+        } else if (p.type === 'confetti') {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size * 0.55, -p.size * 0.32, p.size * 1.1, p.size * 0.64);
+          ctx.restore();
+        } else {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 0.42, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // بازیافت ذرات پس از خروج از کادر
+        if (p.y > h + 25 || p.x < -35 || p.x > w + 35) {
+          if (particles.length > 60) {
+            particles.splice(i, 1);
+          } else {
+            particles[i] = spawnParticle(false, false);
+          }
+        }
+      }
+
+      if (!audio.paused || particles.some(p => p.burstMode)) {
+        animFrameId = requestAnimationFrame(renderParticles);
+      } else {
+        animFrameId = null;
+      }
+    }
+
+    function setPlayingState(isPlaying) {
+      if (isPlaying) {
+        cardStage.classList.add('playing');
+        equalizer.classList.add('active');
+        playPauseBtn.textContent = '❚❚';
+        resizeCanvas();
+        if (particles.length === 0) initParticles(55);
+        if (!animFrameId) renderParticles();
+      } else {
+        cardStage.classList.remove('playing');
+        equalizer.classList.remove('active');
+        playPauseBtn.textContent = '▶';
+      }
+    }
+
+    function startExperience() {
+      envelopeOverlay.classList.add('hidden');
+      postcardWrapper.classList.add('visible');
+      typeWriter(greetingText, typedMessageEl);
+
+      audio.play()
+        .then(() => {
+          setPlayingState(true);
+          triggerCelebrationBurst();
+        })
+        .catch(() => {
+          setPlayingState(false);
+        });
+    }
+
+    // باز کردن کارت با کلیک روی دکمه پاکت
+    openCardBtn.addEventListener('click', startExperience);
+
+    // تلاش برای پخش خودکار در صورت پشتیبانی مرورگر
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      audio.play()
+        .then(() => {
+          // اگر مرورگر بدون کلیک اجازه پخش داد، کارت مستقیماً باز شود
+          envelopeOverlay.classList.add('hidden');
+          postcardWrapper.classList.add('visible');
+          typeWriter(greetingText, typedMessageEl);
+          setPlayingState(true);
+          triggerCelebrationBurst();
+        })
+        .catch(() => {
+          // در موبایل با اولین لمس دکمه باز کردن کارت، صدا و انیمیشن فوراً اجرا می‌شود
+        });
+    });
+
+    // کنترل دکمه پخش / توقف
+    playPauseBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().then(() => setPlayingState(true)).catch(() => {});
+      } else {
+        audio.pause();
+        setPlayingState(false);
+      }
+    });
+
+    audio.addEventListener('play', () => setPlayingState(true));
+    audio.addEventListener('pause', () => setPlayingState(false));
+
+    // به‌روزرسانی نوار زمان موزیک
+    function formatTime(sec) {
+      if (!isFinite(sec)) return '00:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    audio.addEventListener('loadedmetadata', () => {
+      durationTimeEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = `${pct}%`;
+      }
+    });
+
+    progressWrap.addEventListener('click', (e) => {
+      if (!audio.duration) return;
+      const rect = progressWrap.getBoundingClientRect();
+      // محاسبه صحیح در حالت راست‌به‌چپ
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      audio.currentTime = ratio * audio.duration;
+    });
+
+    burstBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      }
+      triggerCelebrationBurst();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // بخش تولید و دانلود QR Code
+    const qrModal = document.getElementById('qrModal');
+    const openQrBtn = document.getElementById('openQrBtn');
+    const closeQrBtn = document.getElementById('closeQrBtn');
+    const downloadQrBtn = document.getElementById('downloadQrBtn');
+    const qrcodeBox = document.getElementById('qrcodeBox');
+    let qrGenerated = false;
+
+    openQrBtn.addEventListener('click', () => {
+      qrModal.classList.add('open');
+      if (!qrGenerated && typeof QRCode !== 'undefined') {
+        qrcodeBox.innerHTML = '';
+        new QRCode(qrcodeBox, {
+          text: window.location.href,
+          width: 190,
+          height: 190,
+          colorDark: '#2d1f14',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+        qrGenerated = true;
+      }
+    });
+
+    closeQrBtn.addEventListener('click', () => {
+      qrModal.classList.remove('open');
+    });
+
+    qrModal.addEventListener('click', (e) => {
+      if (e.target === qrModal) qrModal.classList.remove('open');
+    });
+
+    downloadQrBtn.addEventListener('click', () => {
+      const qrCanvas = qrcodeBox.querySelector('canvas');
+      if (!qrCanvas) return;
+      const link = document.createElement('a');
+      link.download = 'teachers-day-qrcode.png';
+      link.href = qrCanvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
+```
+
+### راهنمای قرار دادن فایل‌ها در گیت‌هاب:
+* سه فایل زیر را کنار هم در یک مخزن قرار دهید:
+  1. `index.html` (کد بالا)
+  2. `card.jpg` (تصویر بهینه‌سازی‌شده معلم که در مرحله قبل ساخته شد)
+  3. `music.mp3` (موزیک «باز باران با ترانه» که ارسال کردید)
+* پس از فعال‌سازی **GitHub Pages**، آدرس نهایی را باز کنید؛ با زدن آیکون QR در گوشه بالا-چپ کارت، می‌توانید تصویر **QR Code** آماده چاپ و اشتراک‌گذاری را مستقیماً دانلود کنید.
